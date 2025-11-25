@@ -2,10 +2,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
-const userRoutes = require('./src/routes/userRoutes');
-const bookRoutes = require('./src/routes/bookRoutes');
-const reviewRoutes = require('./src/routes/reviewRoutes');
-const commentRoutes = require('./src/routes/commentRoutes');
+const userRoutes = require('./src/Routes/userRoutes');
+const bookRoutes = require('./src/Routes/bookRoutes');
+const reviewRoutes = require('./src/Routes/reviewRoutes');
+const commentRoutes = require('./src/Routes/commentRoutes');
 
 dotenv.config();
 connectDB();
