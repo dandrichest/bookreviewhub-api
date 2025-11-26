@@ -1,5 +1,5 @@
 
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtokon');
 
 const protect = (req, res, next) => {
   let token = req.headers.authorization?.split(' ')[1];
