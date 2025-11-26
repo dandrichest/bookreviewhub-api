@@ -123,7 +123,7 @@ bookreviewhub-api/
     */
    ```
 
-Access docs at: `https://<your-render-app-url>/api-docs`
+Access docs at: `(https://bookreviewhub-api.onrender.com)`
 
 ---
 
