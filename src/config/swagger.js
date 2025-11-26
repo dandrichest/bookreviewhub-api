@@ -1,3 +1,4 @@
+
 const path = require('path');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -12,7 +13,7 @@ const options = {
     },
     servers: [{ url: 'https://bookreviewhub-api.onrender.com' }]
   },
-  apis: [path.join(__dirname, '../routes/*.js')] // Absolute path
+  apis: [path.resolve(process.cwd(), 'src/routes/*.js')]
 };
 
 const swaggerSpec = swaggerJsDoc(options);
