@@ -11,7 +11,7 @@ const options = {
     },
     servers: [{ url: 'https://bookreviewhub-api.onrender.com' }]
   },
-  apis: ['./src/routes/*.js'],
+  apis: ['../src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsDoc(options);
