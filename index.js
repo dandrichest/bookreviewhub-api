@@ -32,3 +32,10 @@ app.get('/', (req, res) => res.send('BookReviewHub API is running'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// ✅ Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('Error handler caught:', err);
+  res.status(500).json({ message: err.message });
+});
+
