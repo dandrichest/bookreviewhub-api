@@ -11,7 +11,7 @@ const options = {
       version: '1.0.0',
       description: 'API for managing book reviews, comments, and users'
     },
-    servers: [{ url: 'https://bookreviewhub-api.onrender.com' }]
+    servers: [{ url: 'http://localhost:5000' }]
   },
   apis: [path.resolve(process.cwd(), 'src/Routes/*.js')]
 };
