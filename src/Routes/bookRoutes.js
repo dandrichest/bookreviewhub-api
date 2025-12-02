@@ -15,6 +15,74 @@ const router = express.Router();
  *   description: Book management
  */
 
+
+/**
+ * @swagger
+ * /api/books:
+ *   post:
+ *     summary: Create a new book
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               author:
+ *                 type: string
+ *               genre:
+ *                 type: string
+ *               publishedYear:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Book created successfully
+ */
+
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   put:
+ *     summary: Update a book by ID
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Book updated successfully
+ */
+
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   delete:
+ *     summary: Delete a book by ID
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Book deleted successfully
+ */
+
+
 /**
  * @swagger
  * /api/books:
@@ -40,7 +108,8 @@ const router = express.Router();
  *       201:
  *         description: Book created successfully
  */
-router.post('/', createBook);
+
+router.post('/', protect, createBook);       // Protected
 
 /**
  * @swagger
@@ -103,7 +172,8 @@ router.get('/:id', getBookById);
  *       200:
  *         description: Book updated successfully
  */
-router.put('/:id', updateBook);
+
+router.put('/:id', protect, updateBook);     // Protected
 
 /**
  * @swagger
@@ -121,7 +191,7 @@ router.put('/:id', updateBook);
  *       200:
  *         description: Book deleted successfully
  */
-router.delete('/:id', deleteBook);
+router.delete('/:id', protect, deleteBook);  // Protected
 
 
 module.exports = router;

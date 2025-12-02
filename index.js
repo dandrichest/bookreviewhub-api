@@ -15,8 +15,9 @@ connectDB();
 const app = express();
 
 // ✅ Enable CORS globally
-app.use(cors()); // Handles preflight automatically
+app.use(cors());
 
+// ✅ Parse JSON
 app.use(express.json());
 
 // ✅ Routes
@@ -28,10 +29,8 @@ app.use('/api/comments', commentRoutes);
 // ✅ Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// ✅ Health Check
 app.get('/', (req, res) => res.send('BookReviewHub API is running'));
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // ✅ Global Error Handler
 app.use((err, req, res, next) => {
@@ -39,3 +38,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });
 });
 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

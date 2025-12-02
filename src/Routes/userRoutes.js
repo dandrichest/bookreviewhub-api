@@ -1,11 +1,30 @@
+
 const express = require('express');
 const { registerUser, loginUser } = require('../Controllers/userController');
+const { validateRegister } = require('../Middleware/validateUser');
+const { protect } = require('../Middleware/authMiddleware');
+
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: User management
+ */
+
+
+/**
+ * @swagger
+ * /api/users/profile:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile
  */
 
 /**
@@ -31,7 +50,7 @@ const router = express.Router();
  *       201:
  *         description: User registered successfully
  */
-router.post('/register', registerUser);
+router.post('/register', validateRegister, registerUser);
 
 /**
  * @swagger
@@ -55,5 +74,21 @@ router.post('/register', registerUser);
  *         description: User logged in successfully
  */
 router.post('/login', loginUser);
+
+/**
+ * @swagger
+ * /api/users/profile:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile
+ */
+router.get('/profile', protect, (req, res) => {
+  res.json(req.user);
+});
 
 module.exports = router;

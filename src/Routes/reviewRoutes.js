@@ -15,6 +15,73 @@ const router = express.Router();
  *   description: Review management
  */
 
+
+/**
+ * @swagger
+ * /api/reviews:
+ *   post:
+ *     summary: Create a new review
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               bookId:
+ *                 type: string
+ *               rating:
+ *                 type: integer
+ *               reviewText:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Review created successfully
+ */
+
+/**
+ * @swagger
+ * /api/reviews/{id}:
+ *   put:
+ *     summary: Update a review by ID
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review updated successfully
+ */
+
+/**
+ * @swagger
+ * /api/reviews/{id}:
+ *   delete:
+ *     summary: Delete a review by ID
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review deleted successfully
+ */
+
 /**
  * @swagger
  * /api/reviews:
@@ -40,7 +107,8 @@ const router = express.Router();
  *       201:
  *         description: Review created successfully
  */
-router.post('/', createReview);
+router.post('/', protect, createReview);          // Protected
+
 
 /**
  * @swagger
@@ -105,7 +173,7 @@ router.get('/user/:userId', getReviewsByUser);
  *       200:
  *         description: Review updated successfully
  */
-router.put('/:id', updateReview);
+router.put('/:id', protect, updateReview);        // Protected
 
 /**
  * @swagger
@@ -123,7 +191,6 @@ router.put('/:id', updateReview);
  *       200:
  *         description: Review deleted successfully
  */
-router.delete('/:id', deleteReview);
-
+router.delete('/:id', protect, deleteReview);     // Protected
 
 module.exports = router;
