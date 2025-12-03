@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand",
     "web": "node index.js"
   },
   "repository": {
@@ -31,6 +31,9 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "jest": "^30.2.0",
+    "mockingoose": "^2.16.2",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.1.4"
   }
 }
