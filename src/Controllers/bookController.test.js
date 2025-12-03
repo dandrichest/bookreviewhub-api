@@ -28,8 +28,9 @@ describe('Book Controller using mockingoose', () => {
 
       const req = mockRequest();
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getBooks(req, res);
+      await getBooks(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -37,18 +38,22 @@ describe('Book Controller using mockingoose', () => {
           expect.objectContaining({ title: 'Book Two', author: 'Author B' })
         ])
       );
+      expect(next).not.toHaveBeenCalled();
     });
 
-    it('should return 500 on database error', async () => {
+    it('should call next with error on database error', async () => {
       mockingoose(Book).toReturn(new Error('DB error'), 'find');
 
       const req = mockRequest();
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getBooks(req, res);
+      await getBooks(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: 'DB error' });
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toBe('DB error');
     });
 
   });
@@ -63,12 +68,29 @@ describe('Book Controller using mockingoose', () => {
 
       const req = mockRequest({ id: bookId });
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getBookById(req, res);
+      await getBookById(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({ title: 'Book One', author: 'Author A' })
       );
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('should call next with error on database error', async () => {
+      mockingoose(Book).toReturn(new Error('DB error'), 'findOne');
+
+      const req = mockRequest({ id: '1' });
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await getBookById(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toBe('DB error');
     });
 
     it('should return 404 if book not found', async () => {
@@ -76,23 +98,13 @@ describe('Book Controller using mockingoose', () => {
 
       const req = mockRequest({ id: 'nonexistentId' });
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getBookById(req, res);
+      await getBookById(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ message: 'Book not found' });
-    });
-
-    it('should return 500 on database error', async () => {
-      mockingoose(Book).toReturn(new Error('DB error'), 'findOne');
-
-      const req = mockRequest({ id: '1' });
-      const res = mockResponse();
-
-      await getBookById(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: 'DB error' });
+      expect(next).not.toHaveBeenCalled();
     });
 
   });

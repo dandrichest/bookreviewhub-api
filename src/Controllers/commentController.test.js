@@ -3,7 +3,6 @@ const mockingoose = require('mockingoose');
 const Comment = require('../models/Comment');
 const { getCommentsByReview } = require('./commentController');
 
-
 const mockRequest = (params = {}) => ({ params });
 const mockResponse = () => {
   const res = {};
@@ -31,8 +30,9 @@ describe('Comment Controller using mockingoose', () => {
 
       const req = mockRequest({ reviewId: reviewId.toHexString() });
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getCommentsByReview(req, res);
+      await getCommentsByReview(req, res, next);
 
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -40,18 +40,22 @@ describe('Comment Controller using mockingoose', () => {
           expect.objectContaining({ reviewId }),
         ])
       );
+      expect(next).not.toHaveBeenCalled();
     });
 
-    it('should return 500 on database error', async () => {
+    it('should call next with error on database error', async () => {
       mockingoose(Comment).toReturn(new Error('DB error'), 'find');
 
       const req = mockRequest({ reviewId: new mongoose.Types.ObjectId().toHexString() });
       const res = mockResponse();
+      const next = jest.fn();
 
-      await getCommentsByReview(req, res);
+      await getCommentsByReview(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: 'DB error' });
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toBe('DB error');
     });
 
   });
