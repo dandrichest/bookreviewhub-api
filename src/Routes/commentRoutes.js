@@ -1,4 +1,6 @@
 const express = require('express');
+const { protect } = require('../Middleware/authMiddleware'); 
+const validateComment = require('../Middleware/validateComment');
 const {
   createComment,
   getCommentsByReview,

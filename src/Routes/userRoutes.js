@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { registerUser, loginUser } = require('../Controllers/userController');
-const { validateRegister } = require('../Middleware/validateUser');
+const validateUser = require('../Middleware/validateUser');
 const { protect } = require('../Middleware/authMiddleware');
 
 const router = express.Router();
@@ -50,7 +50,9 @@ const router = express.Router();
  *       201:
  *         description: User registered successfully
  */
-router.post('/register', validateRegister, registerUser);
+router.post('/register', validateUser, registerUser);
+
+
 
 /**
  * @swagger
