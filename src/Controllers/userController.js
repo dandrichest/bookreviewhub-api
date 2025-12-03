@@ -3,7 +3,7 @@ const User = require('../models/User');
 const generateToken = require('../Utils/generateToken');
 const bcrypt = require('bcryptjs');
 
-exports.registerUser = async (req, res) => {
+exports.registerUser = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
     const userExists = await User.findOne({ email });
@@ -17,15 +17,16 @@ exports.registerUser = async (req, res) => {
       token: generateToken(user._id)
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.loginUser = async (req, res) => {
+
+exports.loginUser = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,
         username: user.username,
@@ -33,9 +34,9 @@ exports.loginUser = async (req, res) => {
         token: generateToken(user._id)
       });
     } else {
-      res.status(400).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };

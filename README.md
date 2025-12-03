@@ -27,7 +27,7 @@ A Node.js REST API for managing book reviews, user authentication, and comments 
 ## ⚙️ Setup Instructions
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/<your-username>/bookreviewhub-api.git
+   git clone https://github.com/dandrichest/bookreviewhub-api.git
    cd bookreviewhub-api
    ```
 
@@ -124,6 +124,7 @@ bookreviewhub-api/
    ```
 
 Access docs at: `(https://bookreviewhub-api.onrender.com)`
+local Access at: `(http://)`
 
 ---
 
