@@ -81,7 +81,7 @@ const router = express.Router();
  *       201:
  *         description: Comment created successfully
  */
-router.post('/', protect, createComment);          // Protected
+router.post('/', validateComment, protect, createComment);          // Protected
 
 /**
  * @swagger

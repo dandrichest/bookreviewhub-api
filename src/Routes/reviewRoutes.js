@@ -107,7 +107,7 @@ const router = express.Router();
  *       201:
  *         description: Review created successfully
  */
-router.post('/', protect, createReview);          // Protected
+router.post('/', validateReview, protect, createReview);          // Protected
 
 
 /**
@@ -173,7 +173,7 @@ router.get('/user/:userId', getReviewsByUser);
  *       200:
  *         description: Review updated successfully
  */
-router.put('/:id', protect, updateReview);        // Protected
+router.put('/:id', validateReview, protect, updateReview);        // Protected
 
 /**
  * @swagger

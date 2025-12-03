@@ -109,7 +109,7 @@ const router = express.Router();
  *         description: Book created successfully
  */
 
-router.post('/', protect, createBook);       // Protected
+router.post('/', validateBook, protect, createBook);       // Protected
 
 /**
  * @swagger
@@ -173,7 +173,7 @@ router.get('/:id', getBookById);
  *         description: Book updated successfully
  */
 
-router.put('/:id', protect, updateBook);     // Protected
+router.put('/:id', validateBook, protect, updateBook);     // Protected
 
 /**
  * @swagger
