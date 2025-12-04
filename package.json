@@ -6,8 +6,18 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest --runInBand",
-    "web": "node index.js"
+    "web": "node index.js",
+    "test": "jest --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "forceExit": true,
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "roots": [
+      "<rootDir>/src/test"
+    ]
   },
   "repository": {
     "type": "git",
@@ -34,6 +44,7 @@
   "devDependencies": {
     "jest": "^30.2.0",
     "mockingoose": "^2.16.2",
+    "mongodb-memory-server": "^10.4.1",
     "nodemon": "^3.1.11",
     "supertest": "^7.1.4"
   }
