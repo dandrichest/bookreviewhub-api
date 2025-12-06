@@ -9,7 +9,6 @@
     "web": "node index.js",
     "test": "jest --runInBand"
   },
-
   "jest": {
     "testEnvironment": "node",
     "forceExit": true,
