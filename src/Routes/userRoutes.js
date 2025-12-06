@@ -1,5 +1,7 @@
 
 const express = require('express');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const { registerUser, loginUser } = require('../Controllers/userController');
 const validateUser = require('../Middleware/validateUser');
 const { protect } = require('../Middleware/authMiddleware');
@@ -11,20 +13,6 @@ const router = express.Router();
  * tags:
  *   name: Users
  *   description: User management
- */
-
-
-/**
- * @swagger
- * /api/users/profile:
- *   get:
- *     summary: Get user profile
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User profile
  */
 
 /**
@@ -51,8 +39,6 @@ const router = express.Router();
  *         description: User registered successfully
  */
 router.post('/register', validateUser, registerUser);
-
-
 
 /**
  * @swagger
@@ -92,5 +78,43 @@ router.post('/login', loginUser);
 router.get('/profile', protect, (req, res) => {
   res.json(req.user);
 });
+
+/**
+ * @swagger
+ * /api/users/auth/github:
+ *   get:
+ *     summary: Initiate GitHub OAuth login
+ *     tags: [Users]
+ *     responses:
+ *       302:
+ *         description: Redirects to GitHub for authentication
+ */
+router.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+/**
+ * @swagger
+ * /api/users/auth/github/callback:
+ *   get:
+ *     summary: GitHub OAuth callback
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Returns JWT after successful GitHub login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authenticated user
+ */
+router.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  (req, res) => {
+    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token });
+  }
+);
 
 module.exports = router;

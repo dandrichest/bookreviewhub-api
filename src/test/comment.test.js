@@ -26,7 +26,9 @@ beforeAll(async () => {
 
   jest.resetModules();
 
-  app = require('../../index');
+  
+app = require('../../app');
+
   connectDB = require('../../src/config/db');
 
   await connectDB();

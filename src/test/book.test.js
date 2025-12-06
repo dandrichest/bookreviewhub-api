@@ -19,7 +19,7 @@ beforeAll(async () => {
 
   jest.resetModules();
 
-  app = require('../../index');
+  app = require('../../app'); // ✅ FIXED
   connectDB = require('../../src/config/db');
 
   await connectDB();
@@ -58,7 +58,6 @@ describe('Book API', () => {
       });
 
     expect(res.statusCode).toBe(201);
-    // Controller returns raw book doc
     expect(res.body).toHaveProperty('title', 'Test Book');
     expect(typeof res.body._id).toBe('string');
   });

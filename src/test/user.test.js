@@ -1,4 +1,5 @@
 
+// src/test/user.test.js
 jest.setTimeout(30000);
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -10,21 +11,20 @@ let app;
 let connectDB;
 
 beforeAll(async () => {
-  // Start in-memory Mongo and set env BEFORE requiring index.js
   mongoServer = await MongoMemoryServer.create();
   process.env.NODE_ENV = 'test';
   process.env.MONGODB_URI = mongoServer.getUri();
 
-  app = require('../../index');
+  jest.resetModules();
+
+  app = require('../../app'); // ✅ FIXED
   connectDB = require('../../src/config/db');
 
   await connectDB();
 });
 
 afterAll(async () => {
-  try {
-    await mongoose.connection.dropDatabase();
-  } catch (_) {}
+  try { await mongoose.connection.dropDatabase(); } catch (_) {}
   await mongoose.connection.close();
   await mongoServer.stop();
 });
@@ -35,24 +35,16 @@ describe('User API', () => {
   it('should register a new user', async () => {
     const res = await request(app)
       .post('/api/users/register')
-      .send({
-        username: 'TestUser',
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      .send({ username: 'TestUser', email: 'test@example.com', password: 'password123' });
 
     expect(res.statusCode).toBe(201);
-    // If your register returns user but not token, change this assertion accordingly.
     expect(res.body).toHaveProperty('token');
   });
 
   it('should login the user', async () => {
     const res = await request(app)
       .post('/api/users/login')
-      .send({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      .send({ email: 'test@example.com', password: 'password123' });
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('token');
