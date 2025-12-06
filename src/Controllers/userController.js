@@ -1,4 +1,4 @@
-
+// src/Controllers/userController.js
 const User = require('../models/User');
 const generateToken = require('../Utils/generateToken');
 const bcrypt = require('bcryptjs');
@@ -36,6 +36,29 @@ exports.loginUser = async (req, res, next) => {
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { username, email } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { username, email },
+      { new: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(updatedUser);
   } catch (error) {
     next(error);
   }

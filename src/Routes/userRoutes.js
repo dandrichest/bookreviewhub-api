@@ -2,7 +2,11 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const { registerUser, loginUser } = require('../Controllers/userController');
+const {
+  registerUser,
+  loginUser,
+  updateUser // ✅ Add this in userController
+} = require('../Controllers/userController');
 const validateUser = require('../Middleware/validateUser');
 const { protect } = require('../Middleware/authMiddleware');
 
@@ -81,6 +85,37 @@ router.get('/profile', protect, (req, res) => {
 
 /**
  * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: Update user details
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ */
+router.put('/:id', protect, updateUser); // ✅ New PUT route
+
+/**
+ * @swagger
  * /api/users/auth/github:
  *   get:
  *     summary: Initiate GitHub OAuth login
@@ -112,7 +147,7 @@ router.get('/auth/github', passport.authenticate('github', { scope: ['user:email
 router.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET || 'testsecret', { expiresIn: '1h' });
     res.json({ token });
   }
 );

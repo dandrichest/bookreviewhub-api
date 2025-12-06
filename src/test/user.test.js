@@ -17,7 +17,7 @@ beforeAll(async () => {
 
   jest.resetModules();
 
-  app = require('../../app'); // ✅ FIXED
+  app = require('../../app');
   connectDB = require('../../src/config/db');
 
   await connectDB();
@@ -31,6 +31,7 @@ afterAll(async () => {
 
 describe('User API', () => {
   let token;
+  let userId;
 
   it('should register a new user', async () => {
     const res = await request(app)
@@ -39,6 +40,7 @@ describe('User API', () => {
 
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('token');
+    userId = res.body._id;
   });
 
   it('should login the user', async () => {
@@ -58,5 +60,17 @@ describe('User API', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('email', 'test@example.com');
+  });
+
+  it('should update user details (PUT)', async () => {
+    const res = await request(app)
+      .put(`/api/users/${userId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ username: 'UpdatedUser', email: 'updated@example.com' });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('_id', userId);
+    expect(res.body).toHaveProperty('username', 'UpdatedUser');
+    expect(res.body).toHaveProperty('email', 'updated@example.com');
   });
 });
