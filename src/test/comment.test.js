@@ -26,9 +26,7 @@ beforeAll(async () => {
 
   jest.resetModules();
 
-  
-app = require('../../app');
-
+  app = require('../../app');
   connectDB = require('../../src/config/db');
 
   await connectDB();
@@ -45,14 +43,12 @@ app = require('../../app');
   });
   token = login.body.token;
 
-  // 2) Get the authenticated user's profile to obtain userId (required by the Comment model)
+  // 2) Get user profile
   const profile = await request(app)
     .get('/api/users/profile')
     .set('Authorization', `Bearer ${token}`);
   userId = getId(profile.body);
-  if (!userId) {
-    throw new Error('Could not determine userId from /api/users/profile response');
-  }
+  if (!userId) throw new Error('Could not determine userId');
 
   // 3) Create a book
   const bookRes = await request(app)
@@ -64,10 +60,9 @@ app = require('../../app');
       genre: 'Drama',
       publishedYear: 2020,
     });
-  const bookDoc = bookRes.body; // raw doc
-  bookId = getId(bookDoc);
+  bookId = getId(bookRes.body);
 
-  // 4) Create a review (so we can comment on it)
+  // 4) Create a review
   const reviewRes = await request(app)
     .post('/api/reviews')
     .set('Authorization', `Bearer ${token}`)
@@ -77,8 +72,7 @@ app = require('../../app');
       rating: 3,
       reviewText: 'Decent.',
     });
-  const reviewDoc = reviewRes.body;
-  reviewId = getId(reviewDoc);
+  reviewId = getId(reviewRes.body);
 });
 
 afterAll(async () => {
@@ -93,13 +87,13 @@ describe('Comment API', () => {
       .post('/api/comments')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        reviewId,                   // REQUIRED per your Comment model
-        userId,                     // REQUIRED per your Comment model
+        reviewId,
+        userId,
         commentText: 'I agree with this!',
       });
 
     expect(res.statusCode).toBe(201);
-    const comment = res.body; // raw comment doc
+    const comment = res.body;
     commentId = getId(comment);
     expect(typeof commentId).toBe('string');
     expect(comment).toHaveProperty('reviewId', reviewId);
@@ -107,10 +101,23 @@ describe('Comment API', () => {
     expect(comment).toHaveProperty('commentText', 'I agree with this!');
   });
 
+  it('updates a comment (PUT)', async () => {
+    const res = await request(app)
+      .put(`/api/comments/${commentId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        commentText: 'Updated comment text',
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('_id', commentId);
+    expect(res.body).toHaveProperty('commentText', 'Updated comment text');
+  });
+
   it('gets comments for a review', async () => {
     const res = await request(app).get(`/api/comments/review/${reviewId}`);
     expect(res.statusCode).toBe(200);
-    const arr = res.body; // raw array of comments
+    const arr = res.body;
     expect(Array.isArray(arr)).toBe(true);
     expect(arr.length).toBeGreaterThan(0);
     const found = arr.find(c => getId(c) === commentId);
