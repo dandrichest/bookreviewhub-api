@@ -1,5 +1,4 @@
-
-// src/test/user.test.js
+//src/test/user.test.js
 jest.setTimeout(30000);
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -72,5 +71,20 @@ describe('User API', () => {
     expect(res.body).toHaveProperty('_id', userId);
     expect(res.body).toHaveProperty('username', 'UpdatedUser');
     expect(res.body).toHaveProperty('email', 'updated@example.com');
+  });
+
+  it('should delete the user (DELETE)', async () => {
+    const res = await request(app)
+      .delete(`/api/users/${userId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'User deleted successfully');
+
+    const check = await request(app)
+      .get('/api/users/profile')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(check.statusCode).toBe(401);
   });
 });

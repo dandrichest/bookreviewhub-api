@@ -1,4 +1,4 @@
-
+//src/Middleware/validateUser.js
 function validateUser(req, res, next) {
   const { username, email, password } = req.body;
   const errors = [];

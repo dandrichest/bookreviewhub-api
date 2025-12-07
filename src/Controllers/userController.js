@@ -1,8 +1,8 @@
-// src/Controllers/userController.js
+
 const User = require('../models/User');
 const generateToken = require('../Utils/generateToken');
-const bcrypt = require('bcryptjs');
 
+// Register user
 exports.registerUser = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
@@ -21,7 +21,7 @@ exports.registerUser = async (req, res, next) => {
   }
 };
 
-
+// Login user
 exports.loginUser = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -41,8 +41,7 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-
-
+// Update user
 exports.updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -59,6 +58,22 @@ exports.updateUser = async (req, res, next) => {
     }
 
     res.json(updatedUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete user
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User deleted successfully' });
   } catch (error) {
     next(error);
   }

@@ -1,11 +1,12 @@
-
+//src/Routes/userRoutes.js
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const {
   registerUser,
   loginUser,
-  updateUser // ✅ Add this in userController
+  updateUser,
+  deleteUser 
 } = require('../Controllers/userController');
 const validateUser = require('../Middleware/validateUser');
 const { protect } = require('../Middleware/authMiddleware');
@@ -112,7 +113,27 @@ router.get('/profile', protect, (req, res) => {
  *       200:
  *         description: User updated successfully
  */
-router.put('/:id', protect, updateUser); // ✅ New PUT route
+router.put('/:id', protect, updateUser);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   delete:
+ *     summary: Delete a user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ */
+router.delete('/:id', protect, deleteUser);
 
 /**
  * @swagger
